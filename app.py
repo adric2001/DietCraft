@@ -139,9 +139,13 @@ def generate_protein_requirements(goal, weight):
     if goal == "maintain":
         protein = weight * .5
         return protein
+
 @app.route('/')
 def index():
     return render_template('index.html')
+@app.route('/form')
+def form():
+    return render_template('form.html')
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
