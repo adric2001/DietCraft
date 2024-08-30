@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DietCraft Results</title>
+</head>
+<body>
+    <h1>Your DietCraft Results</h1>
+    <p>Calories Required: {{ calories }}</p>
+    <p>Protein Required: {{ protein }}</p>
+    <h2>Weekly Diet Plan</h2>
+    {{ diet_plan|safe }}
+</body>
+</html>
