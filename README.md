@@ -1,6 +1,5 @@
-DietCraft
-
 **About**
+
 DietCraft is a personalized weight management app designed to help users achieve their health and fitness goals. Whether you want to lose weight, gain muscle, or adopt healthier eating habits, DietCraft offers a comprehensive solution with customized meal plans, progress tracking, and weekly updates. The app is tailored to individual dietary preferences and lifestyle, providing everything you need to stay on track, including a personalized shopping list.
 
 **Key Features**
@@ -25,18 +24,26 @@ Nutritional Insights: Learn more about portion control, balanced eating habits, 
 Customizable Alerts: Set reminders for meal prep, grocery shopping, and weekly check-ins to stay on track.
 
 **How to Use DietCraft**
+
 Sign Up & Complete Questionnaire: Start by signing up and completing a simple questionnaire to customize your plan.
 Receive Your Plan: Based on your input, DietCraft will generate your personalized weekly meal plan and shopping list.
 Track Progress & Update Plan: Each week, update your progress and receive an adjusted plan and new recipes.
 Stay On Track: Use DietCraft’s reminders, educational content, and insights to stick to your diet and achieve your goals.
 
 **Tech Stack**
+
 Backend: Python for core calculations and logic
+
 Frontend: React Native for cross-platform mobile support
+
 API Integration: Fitness tracking apps for exercise data
+
 Data Storage: SQLite or cloud-based storage for user information and meal plans
 
 **Future Roadmap**
+
 Enhanced Exercise Plans: Adding tailored workout routines.
+
 AI-Based Recipe Suggestions: Automated suggestions based on individual tastes and preferences.
+
 Wearable Integration: Support for fitness wearables to track steps, heart rate, and calories burned.
