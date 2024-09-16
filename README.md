@@ -31,6 +31,9 @@ Track Progress & Update Plan: Each week, update your progress and receive an adj
 Stay On Track: Use DietCraft’s reminders, educational content, and insights to stick to your diet and achieve your goals.
 
 **Tech Stack**
+Hosted on a VPS
+
+Containers/Orchatration: Docker and Kubernetes
 
 Web Server Framework: Flask
 
