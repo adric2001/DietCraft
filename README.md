@@ -33,17 +33,15 @@ Stay On Track: Use DietCraft’s reminders, educational content, and insights to
 **Tech Stack**
 Hosted on a VPS
 
-Containers/Orchatration: Docker and Kubernetes
-
 Web Server Framework: Flask
 
 Backend: Python for core calculations and logic
 
-Frontend: React.js (React Native in future for mobile support)
+Frontend: Vue.js, Bootstrap
 
 API Integration: Fitness tracking apps for exercise data
 
-Data Storage: SQLite 
+Data Storage: Firebase 
 
 **Future Roadmap**
 
