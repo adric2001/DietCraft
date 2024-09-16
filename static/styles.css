@@ -1,0 +1,12 @@
+body {
+    background: rgb(84,133,72);
+background: linear-gradient(180deg, rgba(84,133,72,1) 0%, rgba(130,130,130,1) 100%);
+}
+
+.btn-warning {
+    background-color: #FFB74D;
+}
+
+.text {
+    color: #F5F5F5;
+}
