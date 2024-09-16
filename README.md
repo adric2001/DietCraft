@@ -32,13 +32,15 @@ Stay On Track: Use DietCraft’s reminders, educational content, and insights to
 
 **Tech Stack**
 
+Web Server Framework: Flask
+
 Backend: Python for core calculations and logic
 
 Frontend: React.js (React Native in future for mobile support)
 
 API Integration: Fitness tracking apps for exercise data
 
-Data Storage: SQLite or cloud-based storage for user information and meal plans
+Data Storage: SQLite 
 
 **Future Roadmap**
 
