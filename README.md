@@ -34,7 +34,7 @@ Stay On Track: Use DietCraft’s reminders, educational content, and insights to
 
 Backend: Python for core calculations and logic
 
-Frontend: React Native for cross-platform mobile support
+Frontend: React.js (React Native in future for mobile support)
 
 API Integration: Fitness tracking apps for exercise data
 
