@@ -1,2 +1,10 @@
 # Ignore .env files with sensitive information
 .env
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore virtual environments
+venv/
+.env/
