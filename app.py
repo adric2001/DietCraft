@@ -1,10 +1,19 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
+from dotenv import load_dotenv
 import os
-from dietcraft import generate_weekly_diet_plan, generate_calorie_requirements, generate_protein_requirements
-import openai
+from modules.dietcraft import DietCraft
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize the Flask app
 app = Flask(__name__)
 
+# Retrieve the API key from .env
+api_key = os.getenv('API_KEY')
+
+# Create an instance of DietCraft with the API key
+dietcraft = DietCraft(api_key)
 
 @app.route('/')
 def index():
@@ -27,12 +36,14 @@ def calculate():
     time_frame = int(request.form['time_frame'])
     goal = request.form['goal']
 
-    # Calculate calories and protein requirements
-    calories = generate_calorie_requirements(age, gender, height_feet, height_inches, current_weight, desired_weight, time_frame, activity_level)
-    protein = generate_protein_requirements(goal, current_weight)
+    print(age, gender, height_feet, height_inches, desired_weight, current_weight, activity_level, time_frame, goal)
 
-    # Generate diet plan
-    weekly_diet_plan_df = generate_weekly_diet_plan(calories, protein)
+    # Calculate calories and protein requirements using the DietCraft instance
+    calories = dietcraft.generate_calorie_requirements(age, gender, height_feet, height_inches, current_weight, desired_weight, time_frame, activity_level)
+    protein = dietcraft.generate_protein_requirements(goal, current_weight)
+
+    # Generate diet plan using the DietCraft instance
+    weekly_diet_plan_df = dietcraft.generate_weekly_diet_plan(calories, protein)
 
     return render_template('result.html', calories=calories, protein=protein, diet_plan=weekly_diet_plan_df.to_html())
 

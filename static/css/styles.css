@@ -1,12 +1,82 @@
 body {
-    background: rgb(84,133,72);
-background: linear-gradient(180deg, rgba(84,133,72,1) 0%, rgba(130,130,130,1) 100%);
-}
-
-.btn-warning {
-    background-color: #FFB74D;
-}
-
-.text {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .header {
+    background-color: #f8f9fa;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  }
+  .header h1 {
+    font-weight: bold;
     color: #F5F5F5;
-}
+    font-size: 1.75rem;
+  }
+  .header .nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6c757d;
+  }
+  .header .nav-link:hover {
+    color: #F5F5F5;
+  }
+  .header .btn-warning {
+    background-color: #F5F5F5;
+    border-color: #F5F5F5;
+  }
+  .header .btn-warning:hover {
+    background-color: #F5F5F5;
+  }
+ /* Hero section with background image and overlay */
+ .hero-section {
+    position: relative;
+    color: #6c757d;
+    padding: 100px 0;
+    background-image: url('../images/bowl.png'); /* Example background image */
+    background-size: cover;
+    background-position: center;
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay with 50% opacity */
+    z-index: 1;
+  }
+  .hero-section .container {
+    position: relative;
+    z-index: 2; /* Ensure content is above the overlay */
+  }
+  .hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+  }
+  .hero-section .lead {
+    font-size: 1.25rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .features-section .feature-card {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    transition: transform 0.3s;
+  }
+  .features-section .feature-card:hover {
+    transform: translateY(-10px);
+  }
+  .feature-card h4 {
+    color: #F5F5F5;
+  }
+  footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+  }
+  footer .social-icon {
+    font-size: 1.5rem;
+    color: #6c757d;
+    transition: color 0.3s;
+  }
+  footer .social-icon:hover {
+    color: #F5F5F5;
+  }
