@@ -17,34 +17,18 @@ from sqlalchemy.orm import relationship
 from modules.forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, SettingsForm
 
 # Load environment variables from .env file
-load_dotenv()
+# load_dotenv() ** Not Being Used at the moment
+
+# Define absolute path for the database
+base_dir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.join(base_dir, 'data', 'diet.db')
+os.makedirs(os.path.dirname(db_path), exist_ok=True)  # Ensure 'data' folder exists
 
 # Initialize the Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-ckeditor = CKEditor(app)
-Bootstrap5(app)
-
-# Configure Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-# Retrieve the API key from .env
-api_key = os.getenv('API_KEY')
-
-# Create an instance of DietCraft with the API key
-dietcraft = DietCraft(api_key)
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.get_or_404(User, user_id)
-
-# CREATE DATABASE
-class Base(DeclarativeBase):
-    pass
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///diet.db'
-db = SQLAlchemy(model_class=Base)
-db.init_app(app)
+app.config['SECRET_KEY'] = 'secret'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+db = SQLAlchemy(app)
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -55,20 +39,38 @@ class User(UserMixin, db.Model):
     name: Mapped[str] = mapped_column(String(100))
 
      # Settings fields
-    age: Mapped[int] = mapped_column(Integer)
-    gender: Mapped[str] = mapped_column(String(10))
-    height_feet: Mapped[int] = mapped_column(Integer)
-    height_inches: Mapped[int] = mapped_column(Integer)
-    desired_weight: Mapped[int] = mapped_column(Integer)
-    current_weight: Mapped[int] = mapped_column(Integer)
-    activity_level: Mapped[str] = mapped_column(String(20))
-    time_frame: Mapped[int] = mapped_column(Integer)
-    goal: Mapped[str] = mapped_column(String(255))
+    age: Mapped[int] = mapped_column(Integer, nullable=True)
+    gender: Mapped[str] = mapped_column(String(10), nullable=True)
+    height_feet: Mapped[int] = mapped_column(Integer, nullable=True)
+    height_inches: Mapped[int] = mapped_column(Integer, nullable=True)
+    desired_weight: Mapped[int] = mapped_column(Integer, nullable=True)
+    current_weight: Mapped[int] = mapped_column(Integer, nullable=True)
+    activity_level: Mapped[str] = mapped_column(String(20), nullable=True)
+    time_frame: Mapped[int] = mapped_column(Integer, nullable=True)
+    goal: Mapped[str] = mapped_column(String(255), nullable=True)
 
-    
 
 with app.app_context():
+    db.drop_all()    # Drops all tables
     db.create_all()
+
+ckeditor = CKEditor(app)
+Bootstrap5(app)
+
+# Configure Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# Retrieve the API key from .env
+# api_key = os.getenv('API_KEY') Fix data stuff
+
+# Create an instance of DietCraft with the API key
+# dietcraft = DietCraft(api_key) Fix data stuff
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get_or_404(User, user_id)
+
 
 # Register new users into the User database
 @app.route('/register', methods=["GET", "POST"])
@@ -159,7 +161,7 @@ def settings():
         current_user.goal = form.goal.data
         
         db.session.commit()  # Save changes to the database
-        return redirect(url_for('settings'))  # Redirect to refresh the page with saved data
+        return redirect(url_for('home'))  # Redirect to refresh the page with saved data
 
     return render_template('settings.html', form=form)
 
