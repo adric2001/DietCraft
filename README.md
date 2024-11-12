@@ -30,18 +30,6 @@ Receive Your Plan: Based on your input, DietCraft will generate your personalize
 Track Progress & Update Plan: Each week, update your progress and receive an adjusted plan and new recipes.
 Stay On Track: Use DietCraft’s reminders, educational content, and insights to stick to your diet and achieve your goals.
 
-**Tech Stack**
-Hosted on a VPS
-
-Web Server Framework: Flask
-
-Backend: Python for core calculations and logic
-
-Frontend: Vue.js, Bootstrap
-
-API Integration: Fitness tracking apps for exercise data
-
-Data Storage: Firebase 
 
 **Future Roadmap**
 
