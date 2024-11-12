@@ -14,7 +14,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
 # Import your forms from the forms.py
-from modules.forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
+from modules.forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, SettingsForm
 
 # Load environment variables from .env file
 load_dotenv()
@@ -48,10 +48,22 @@ db.init_app(app)
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(100))
+
+     # Settings fields
+    age: Mapped[int] = mapped_column(Integer)
+    gender: Mapped[str] = mapped_column(String(10))
+    height_feet: Mapped[int] = mapped_column(Integer)
+    height_inches: Mapped[int] = mapped_column(Integer)
+    desired_weight: Mapped[int] = mapped_column(Integer)
+    current_weight: Mapped[int] = mapped_column(Integer)
+    activity_level: Mapped[str] = mapped_column(String(20))
+    time_frame: Mapped[int] = mapped_column(Integer)
+    goal: Mapped[str] = mapped_column(String(255))
 
     
 
@@ -120,40 +132,36 @@ def logout():
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    if request.method == 'POST':
-        try:
-            # Get form data
-            age = int(request.form['age'])
-            gender = request.form['gender']
-            height_feet = int(request.form['height_feet'])
-            height_inches = int(request.form['height_inches'])
-            desired_weight = int(request.form['desired_weight'])
-            current_weight = int(request.form['current_weight'])
-            activity_level = request.form['activity_level']
-            time_frame = int(request.form['time_frame'])
-            goal = request.form['goal']
-            
-            # Update user object
-            current_user.age = age
-            current_user.gender = gender
-            current_user.height_feet = height_feet
-            current_user.height_inches = height_inches
-            current_user.desired_weight = desired_weight
-            current_user.current_weight = current_weight
-            current_user.activity_level = activity_level
-            current_user.time_frame = time_frame
-            current_user.goal = goal
+    form = SettingsForm()
 
-            # Save to database
-            db.session.commit()
-            flash('Settings updated successfully!', 'success')
-        except Exception as e:
-            flash(f'An error occurred: {e}', 'danger')
+    if request.method == 'GET':
+        # Pre-fill form with the user's current settings
+        form.age.data = current_user.age
+        form.gender.data = current_user.gender
+        form.height_feet.data = current_user.height_feet
+        form.height_inches.data = current_user.height_inches
+        form.desired_weight.data = current_user.desired_weight
+        form.current_weight.data = current_user.current_weight
+        form.activity_level.data = current_user.activity_level
+        form.time_frame.data = current_user.time_frame
+        form.goal.data = current_user.goal
 
-        return redirect(url_for('settings'))
-    
-    # Render the settings form with current user data
-    return render_template('settings.html', user=current_user)
+    if form.validate_on_submit():
+        # Update user settings in the database
+        current_user.age = form.age.data
+        current_user.gender = form.gender.data
+        current_user.height_feet = form.height_feet.data
+        current_user.height_inches = form.height_inches.data
+        current_user.desired_weight = form.desired_weight.data
+        current_user.current_weight = form.current_weight.data
+        current_user.activity_level = form.activity_level.data
+        current_user.time_frame = form.time_frame.data
+        current_user.goal = form.goal.data
+        
+        db.session.commit()  # Save changes to the database
+        return redirect(url_for('settings'))  # Redirect to refresh the page with saved data
+
+    return render_template('settings.html', form=form)
 
 @app.route('/')
 def home():

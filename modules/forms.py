@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
+from wtforms import StringField, SubmitField, PasswordField, IntegerField, SelectField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditorField
 
@@ -32,3 +32,18 @@ class LoginForm(FlaskForm):
 class CommentForm(FlaskForm):
     comment_text = CKEditorField("Comment", validators=[DataRequired()])
     submit = SubmitField("Submit Comment")
+
+class SettingsForm(FlaskForm):
+    age = IntegerField('Age', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')], validators=[DataRequired()])
+    height_feet = IntegerField('Height (feet)', validators=[DataRequired()])
+    height_inches = IntegerField('Height (inches)', validators=[DataRequired()])
+    desired_weight = IntegerField('Desired Weight', validators=[DataRequired()])
+    current_weight = IntegerField('Current Weight', validators=[DataRequired()])
+    activity_level = SelectField('Activity Level', choices=[('sedentary', 'Sedentary'), 
+                                                            ('light', 'Light'), 
+                                                            ('moderate', 'Moderate'), 
+                                                            ('active', 'Active')], 
+                                validators=[DataRequired()])
+    time_frame = IntegerField('Time Frame (in weeks)', validators=[DataRequired()])
+    goal = StringField('Goal', validators=[DataRequired()])

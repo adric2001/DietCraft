@@ -12,52 +12,19 @@
         <h1 class="mb-4">Update Your Settings</h1>
         <form method="POST" action="{{ url_for('settings') }}">
             {{ form.hidden_tag() }}
-            <div class="mb-3">
-                <label for="age" class="form-label">Age</label>
-                <input type="number" name="age" id="age" class="form-control" value="{{ user.age }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="gender" class="form-label">Gender</label>
-                <select name="gender" id="gender" class="form-select" required>
-                    <option value="male" {{ 'selected' if user.gender == 'male' else '' }}>Male</option>
-                    <option value="female" {{ 'selected' if user.gender == 'female' else '' }}>Female</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="height_feet" class="form-label">Height (feet)</label>
-                <input type="number" name="height_feet" id="height_feet" class="form-control" value="{{ user.height_feet }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="height_inches" class="form-label">Height (inches)</label>
-                <input type="number" name="height_inches" id="height_inches" class="form-control" value="{{ user.height_inches }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="desired_weight" class="form-label">Desired Weight</label>
-                <input type="number" name="desired_weight" id="desired_weight" class="form-control" value="{{ user.desired_weight }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="current_weight" class="form-label">Current Weight</label>
-                <input type="number" name="current_weight" id="current_weight" class="form-control" value="{{ user.current_weight }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="activity_level" class="form-label">Activity Level</label>
-                <select name="activity_level" id="activity_level" class="form-select" required>
-                    <option value="sedentary" {{ 'selected' if user.activity_level == 'sedentary' else '' }}>Sedentary</option>
-                    <option value="light" {{ 'selected' if user.activity_level == 'light' else '' }}>Light</option>
-                    <option value="moderate" {{ 'selected' if user.activity_level == 'moderate' else '' }}>Moderate</option>
-                    <option value="active" {{ 'selected' if user.activity_level == 'active' else '' }}>Active</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="time_frame" class="form-label">Time Frame (in weeks)</label>
-                <input type="number" name="time_frame" id="time_frame" class="form-control" value="{{ user.time_frame }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="goal" class="form-label">Goal</label>
-                <input type="text" name="goal" id="goal" class="form-control" value="{{ user.goal }}" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Update Settings</button>
-        </form>
+            <form method="POST" action="{{ url_for('settings') }}">
+                {{ form.hidden_tag() }}
+                {{ form.age.label }} {{ form.age() }}
+                {{ form.gender.label }} {{ form.gender() }}
+                {{ form.height_feet.label }} {{ form.height_feet() }}
+                {{ form.height_inches.label }} {{ form.height_inches() }}
+                {{ form.desired_weight.label }} {{ form.desired_weight() }}
+                {{ form.current_weight.label }} {{ form.current_weight() }}
+                {{ form.activity_level.label }} {{ form.activity_level() }}
+                {{ form.time_frame.label }} {{ form.time_frame() }}
+                {{ form.goal.label }} {{ form.goal() }}
+                <button type="submit">Save Settings</button>
+            </form> 
     </div>
     {{ bootstrap.load_js() }}
 </body>
