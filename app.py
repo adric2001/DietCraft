@@ -71,6 +71,13 @@ login_manager.init_app(app)
 def load_user(user_id):
     return db.get_or_404(User, user_id)
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/question1')
+def question_1():
+    return render_template('question_1.html')
 
 # Register new users into the User database
 @app.route('/register', methods=["GET", "POST"])
@@ -165,9 +172,6 @@ def settings():
 
     return render_template('settings.html', form=form)
 
-@app.route('/')
-def home():
-    return render_template('index.html', current_user=current_user)
 
 
 # @app.route('/form')

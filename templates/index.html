@@ -15,14 +15,12 @@
 </head>
 <body>
 
-  {% include 'header.html' %}
-
   <div class="hero-section text-center">
     <div class="container">
       <img src="../static/assets/img/bowl.png" alt="Header Background Photo" style="width:70%;">
       <h1 class="centered display-5 fw-bold">Get your Personalized Plan in Minutes!</h1>
       <p class="lead mb-4">DietCraft is a personalized weight management app designed to help users achieve their health and fitness goals.</p>
-      <a href="#" class="btn btn-warning btn-lg">Start Now!</a>
+      <a href="{{ url_for('question_1') }}" class="btn btn-warning btn-lg btn-hover">Start Now!</a>
     </div>
   </div>
 
@@ -33,28 +31,28 @@
       <div class="col d-flex flex-column align-items-start gap-2">
         <h2 class="fw-bold text-body-emphasis">Achieve Your Goals with These Features</h2>
         <p class="text-body-secondary">Explore a variety of features that will guide you towards achieving your fitness and dietary goals effortlessly.</p>
-        <a href="#" class="btn btn-warning btn-lg">Discover More</a>
+        <a href="#" class="btn btn-warning btn-lg btn-hover">Discover More</a>
       </div>
 
       <div class="col">
         <div class="row row-cols-1 row-cols-sm-2 g-4">
           <div class="col d-flex flex-column gap-2 feature-card p-3">
-            <h4 class="fw-semibold mb-0">Personalized Meal Plans</h4>
+            <h4 class="text-black fw-semibold mb-0">Personalized Meal Plans</h4>
             <p class="text-body-secondary">Transform your eating habits with meal plans tailored specifically to your goals—whether you're looking to lose weight, build muscle, or simply eat healthier.</p>
           </div>
 
           <div class="col d-flex flex-column gap-2 feature-card p-3">
-            <h4 class="fw-semibold mb-0">Weekly Updates</h4>
+            <h4 class="text-black fw-semibold mb-0">Weekly Updates</h4>
             <p class="text-body-secondary">Stay on track with weekly updates that refine your meal plans based on your progress and feedback.</p>
           </div>
 
           <div class="col d-flex flex-column gap-2 feature-card p-3">
-            <h4 class="fw-semibold mb-0">Comprehensive Shopping Lists</h4>
+            <h4 class="text-black fw-semibold mb-0">Comprehensive Shopping Lists</h4>
             <p class="text-body-secondary">Say goodbye to last-minute grocery store runs with our automated shopping lists.</p>
           </div>
 
           <div class="col d-flex flex-column gap-2 feature-card p-3">
-            <h4 class="fw-semibold mb-0">Detailed Nutritional Information</h4>
+            <h4 class="text-black fw-semibold mb-0">Detailed Nutritional Information</h4>
             <p class="text-body-secondary">Gain insight into the nutritional content of your meals with our detailed breakdowns.</p>
           </div>
         </div>
@@ -62,8 +60,6 @@
     </div>
   </div>
 
- 
-  {% include "footer.html" %}
   <!-- Bootstrap JS Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
