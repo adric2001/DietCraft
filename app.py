@@ -1,20 +1,14 @@
-from dotenv import load_dotenv
 import os
 from modules.dietcraft import DietCraft
-from datetime import date
-from flask import Flask, abort, render_template, redirect, url_for, flash, session, request
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
-from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text
-from functools import wraps
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import relationship
-# Import your forms from the forms.py
-from modules.forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, SettingsForm
+from modules.forms import RegisterForm, LoginForm
 
 # Load environment variables from .env file
 # load_dotenv() ** Not Being Used at the moment
@@ -29,6 +23,16 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 db = SQLAlchemy(app)
+ckeditor = CKEditor(app)
+Bootstrap5(app)
+
+# Configure Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get_or_404(User, user_id)
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -50,26 +54,9 @@ class User(UserMixin, db.Model):
     goal: Mapped[str] = mapped_column(String(255), nullable=True)
 
 
-with app.app_context():
-    db.drop_all()    # Drops all tables
+with app.app_context():   
     db.create_all()
 
-ckeditor = CKEditor(app)
-Bootstrap5(app)
-
-# Configure Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-# Retrieve the API key from .env
-# api_key = os.getenv('API_KEY') Fix data stuff
-
-# Create an instance of DietCraft with the API key
-# dietcraft = DietCraft(api_key) Fix data stuff
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.get_or_404(User, user_id)
 
 @app.route('/')
 def home():
@@ -129,9 +116,14 @@ def login():
             return redirect(url_for('login'))
         else:
             login_user(user)
-            return redirect(url_for('home'))
+            return redirect(url_for('profile'))
 
     return render_template("login.html", form=form, current_user=current_user)
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template("profile.html", current_user=current_user)
 
 @app.route('/logout')
 def logout():
@@ -171,36 +163,6 @@ def settings():
         return redirect(url_for('home'))  # Redirect to refresh the page with saved data
 
     return render_template('settings.html', form=form)
-
-
-
-# @app.route('/form')
-# def form():
-#     return render_template('form.html')
-
-# @app.route('/calculate', methods=['POST'])
-# def calculate():
-#     # Get data from form
-#     age = int(request.form['age'])
-#     gender = request.form['gender']
-#     height_feet = int(request.form['height_feet'])
-#     height_inches = int(request.form['height_inches'])
-#     desired_weight = int(request.form['desired_weight'])
-#     current_weight = int(request.form['current_weight'])
-#     activity_level = request.form['activity_level']
-#     time_frame = int(request.form['time_frame'])
-#     goal = request.form['goal']
-
-#     print(age, gender, height_feet, height_inches, desired_weight, current_weight, activity_level, time_frame, goal)
-
-#     # Calculate calories and protein requirements using the DietCraft instance
-#     calories = dietcraft.generate_calorie_requirements(age, gender, height_feet, height_inches, current_weight, desired_weight, time_frame, activity_level)
-#     protein = dietcraft.generate_protein_requirements(goal, current_weight)
-
-#     # Generate diet plan using the DietCraft instance
-#     weekly_diet_plan_df = dietcraft.generate_weekly_diet_plan(calories, protein)
-
-#     return render_template('result.html', calories=calories, protein=protein, diet_plan=weekly_diet_plan_df.to_html())
 
 if __name__ == "__main__":
     app.run(debug=True)

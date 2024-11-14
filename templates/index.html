@@ -18,9 +18,16 @@
   <div class="hero-section text-center">
     <div class="container">
       <img src="../static/assets/img/bowl.png" alt="Header Background Photo" style="width:70%;">
+      {% if current_user.is_authenticated %}
+      <h1 class="centered display-5 fw-bold">Welcome Back to DietCraft!</h1>
+      <p class="lead mb-4">Hope you're having a Great Day {{ current_user.name.title() }}</p>
+      <a href="{{ url_for('profile') }}" class="btn btn-warning btn-lg btn-hover">Return to Personal Dashboard</a>
+      <a href="{{ url_for('logout') }}" class="btn btn-warning btn-lg btn-hover">Logout 😔</a>
+      {% else %}
       <h1 class="centered display-5 fw-bold">Get your Personalized Plan in Minutes!</h1>
       <p class="lead mb-4">DietCraft is a personalized weight management app designed to help users achieve their health and fitness goals.</p>
       <a href="{{ url_for('question_1') }}" class="btn btn-warning btn-lg btn-hover">Start Now!</a>
+      {% endif %}
     </div>
   </div>
 

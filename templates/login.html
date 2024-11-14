@@ -1,3 +1,5 @@
+{% from "bootstrap5/form.html" import render_form %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,30 +40,22 @@
     <!-- Main Content -->
     <main class="mb-4 ">
         <div class="container">
-            <div class="row justify-content-center">
-                <!-- Flash messages -->
-                <div class="col-lg-8 col-md-10 mx-auto">
-                    <!-- Example flash message placeholder (static example) -->
-                    <p class="flash">Example flash message goes here.</p>
-                </div>
-                
-                <!-- Login form -->
-                <div class="col-lg-8 col-md-10 mx-auto">
-                    <form novalidate>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <button type="submit" class="btn btn-warning btn-hover">Log In</button>
-                    </form>
-                    <a href={{ url_for('question_1') }} class="btn btn-outline-warning btn-hover mt-4">Back</a>
-                </div>
+            <div class="row">
+              <!-- Adding Flash message here for users trying to register twice -->
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+              {% for message in messages %}
+              <p class="flash">{{ message }}</p>
+              {% endfor %}
+              {% endif %}
+              {% endwith %}
+              <div class="col-lg-8 col-md-10 mx-auto">
+                <!--Rendering login form here-->
+                {{render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                <a href={{ url_for('question_1') }} class="btn btn-outline-warning btn-hover mt-4">Back</a>
+              </div>
             </div>
-        </div>
+          </div>
     </main>
 
     <!-- Bootstrap JS (optional) -->
