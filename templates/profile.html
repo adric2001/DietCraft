@@ -9,8 +9,78 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Welcome, {{ current_user.name }} to your DietCraft Dashboard!</h1>
+    
+    <div class="container mt-5">
+        <header class="d-flex flex-row-reverse justify-content-around align-items-center mb-4">
+            <h1 class="mx-auto">Welcome, {{ current_user.name.title() }} to your DietCraft Dashboard!</h1>
+                <a href={{ url_for('home') }} class="btn btn-warning btn-hover mt-4">Return Home</a>
+        </header>
 
+
+        <div class="container mt-5">
+            <h1 class="mb-4">Your Settings</h1>
+            <div>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="flash alert alert-info mt-2" id="flash-message">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <form method="POST" action="{{ url_for('profile') }}">
+                <button class="btn btn-warning btn-hover mb-4" type="submit">Save Settings</button>
+                {{ form.hidden_tag() }}
+                <form method="POST" action="{{ url_for('profile') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                    {{ form.age.label }} {{ form.age() }}
+                    </div>
+
+                    <div class="mb-3">
+                    {{ form.gender.label }} {{ form.gender() }}
+                    </div>
+
+                    <div class="mb-3">
+                    {{ form.height_feet.label }} {{ form.height_feet() }}
+                    </div>
+
+                    <div class="mb-3">
+                    {{ form.height_inches.label }} {{ form.height_inches() }}
+                    </div>
+
+                    <div class="mb-3">
+                    {{ form.desired_weight.label }} {{ form.desired_weight() }}
+                    </div>
+
+                    <div class="mb-3">
+                    {{ form.current_weight.label }} {{ form.current_weight() }}
+                    </div>
+
+                    <div class="mb-3">
+                    {{ form.activity_level.label }} {{ form.activity_level() }}
+                    </div>
+                    
+                    <div class="mb-3">
+                    {{ form.time_frame.label }} {{ form.time_frame() }}
+                    </div>
+
+                    <div class="mb-3">
+                    {{ form.goal.label }} {{ form.goal() }}
+                    </div>
+
+                    
+                </form> 
+
+                
+        </div>
+        
+        <div class="container text-end">
+            <a class="btn btn-warning btn-hover">Generate Weekly Diet</a>
+        </div>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, String
 from werkzeug.security import generate_password_hash, check_password_hash
-from modules.forms import RegisterForm, LoginForm
+from modules.forms import RegisterForm, LoginForm, SettingsForm
 
 # Load environment variables from .env file
 # load_dotenv() ** Not Being Used at the moment
@@ -120,19 +120,9 @@ def login():
 
     return render_template("login.html", form=form, current_user=current_user)
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template("profile.html", current_user=current_user)
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('home'))
-
-@app.route('/settings', methods=['GET', 'POST'])
-@login_required
-def settings():
     form = SettingsForm()
 
     if request.method == 'GET':
@@ -159,10 +149,15 @@ def settings():
         current_user.time_frame = form.time_frame.data
         current_user.goal = form.goal.data
         
+        flash("Your Settings have been Updated!")
         db.session.commit()  # Save changes to the database
-        return redirect(url_for('home'))  # Redirect to refresh the page with saved data
+        return redirect(url_for('profile'))  # Redirect to refresh the page with saved data
+    return render_template("profile.html", current_user=current_user, form=form)
 
-    return render_template('settings.html', form=form)
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 if __name__ == "__main__":
     app.run(debug=True)
