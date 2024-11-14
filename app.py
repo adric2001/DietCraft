@@ -149,6 +149,16 @@ def profile():
         current_user.time_frame = form.time_frame.data
         current_user.goal = form.goal.data
         
+        flash(DietCraft.generate_calorie_requirements(
+            age=form.age.data, 
+            gender=form.gender.data, 
+            height_feet=form.height_feet.data, 
+            height_inch=form.height_inches.data, 
+            weight=form.current_weight.data, 
+            desired_weight=form.desired_weight.data, 
+            time_frame=form.time_frame.data, 
+            activity=form.activity_level.data
+            ))
         flash("Your Settings have been Updated!")
         db.session.commit()  # Save changes to the database
         return redirect(url_for('profile'))  # Redirect to refresh the page with saved data
