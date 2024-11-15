@@ -13,14 +13,14 @@ class DietCraft:
 
     def generate_calorie_requirements(age, gender, height_feet, height_inch, weight, desired_weight, time_frame, activity):
 
-        if activity == 'Light':
+        if activity == 'light':
             activity = 1.375
-        elif activity == 'Moderate':
+        elif activity == 'moderate':
             activity = 1.465
-        elif activity == 'Active':
+        elif activity == 'active':
             activity = 1.55
 
-        url = f'https://www.calculator.net/calorie-calculator.html?cage={age}&csex={gender}&cheightfeet={height_feet}&cheightinch={height_inch}&cpound={weight}&cheightmeter=180&ckg=65&cactivity={activity}&cmop=0&coutunit=c&cformula=m&cfatpct=20&printit=0&ctype=standard&x=Calculate'
+        url = f'https://www.calculator.net/calorie-calculator.html?cage={age}&csex={gender[0]}&cheightfeet={height_feet}&cheightinch={height_inch}&cpound={weight}&cheightmeter=180&ckg=65&cactivity={activity}&cmop=0&coutunit=c&cformula=m&cfatpct=20&printit=0&ctype=standard&x=Calculate'
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -54,16 +54,18 @@ class DietCraft:
             total_weight_to_lose = weight - desired_weight
             lbs_per_week = total_weight_to_lose / time_frame
 
-            if 2.5 < lbs_per_week:
+            print(lbs_per_week)
+
+            if 2.5 <= lbs_per_week:
                 return "Not Suggested"
             elif 1.8 < lbs_per_week < 2.5 :
-                return weightloss_df['Calories/Day'][3]
+                return f"Based on your current settings your calorie requirement is {weightloss_df['Calories/Day'][3]} a day"
             elif 0.8 < lbs_per_week < 1.8:
-                return weightloss_df['Calories/Day'][2]
+                return f"Based on your current settings your calorie requirement is {weightloss_df['Calories/Day'][2]} a day"
             elif .2 < lbs_per_week < 0.8:
-                return weightloss_df['Calories/Day'][1]
+                return f"Based on your current settings your calorie requirement is {weightloss_df['Calories/Day'][1]} a day"
             else:
-                return "Maintaining"
+                return "Not a significant enough change, decrease your time frame or decrease your weight."
 
         elif desired_weight > weight:
 
@@ -86,50 +88,25 @@ class DietCraft:
             total_weight_to_gain = desired_weight - weight
             lbs_per_week = total_weight_to_gain / time_frame
 
-            if 2.5 < lbs_per_week:
+            if 2.5 <= lbs_per_week:
                 return "Not Suggested"
             elif 1.8 < lbs_per_week < 2.5:
-                return weightgain_df['Calories/Day'][2]
+                return f"Based on your current settings your calorie requirement is {weightgain_df['Calories/Day'][2]} a day"
             elif .8 < lbs_per_week < 1.8:
-                return weightgain_df['Calories/Day'][1]
+                return f"Based on your current settings your calorie requirement is {weightgain_df['Calories/Day'][1]} a day"
             elif .2 < lbs_per_week < .8:
-                return weightgain_df['Calories/Day'][0]
+                return f"Based on your current settings your calorie requirement is {weightgain_df['Calories/Day'][0]} a day"
             else:
-                return "Maintaining"
+                return "Not a significant enough change, decrease your time frame or increase your weight."
 
-    def generate_protein_requirements(self, goal, weight):
+    def generate_protein_requirements(goal, weight):
 
-        if goal == "gain":
+        if goal == "Gain Muscle":
             protein = weight * .9
             return protein
-        if goal == "maintain":
+        if goal == "Maintain Muscle":
             protein = weight * .5
             return protein
 
     def generate_shopping_list(self, weekly_diet_plan_df):
-        plan_summary = weekly_diet_plan_df.to_csv(index=False, header=True)
-        prompt = (
-            f"Based on the following weekly diet plan, generate a shopping list. "
-            f"Format the shopping list as 'Item, Quantity' in CSV format. Only include the csv without '''csv."
-            f"Here is the plan:\n{plan_summary}"
-        )
-
-        response = self.client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=500,
-            temperature=0.7)
-
-        shopping_list_csv = response.choices[0].message.content.strip()
-
-        # Create a StringIO object
-        csv_buffer = StringIO(shopping_list_csv)
-
-        # Read the CSV data into a DataFrame with error handling for inconsistent rows
-        try:
-            df = pd.read_csv(csv_buffer, quoting=csv.QUOTE_MINIMAL)
-            return df
-        except pd.errors.ParserError as e:
-            return f"Error parsing CSV data: {e}"
+       pass

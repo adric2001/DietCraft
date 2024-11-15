@@ -18,7 +18,7 @@ class SettingsForm(FlaskForm):
     age = IntegerField('Age', validators=[DataRequired()])
     gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')], validators=[DataRequired()])
     height_feet = IntegerField('Height (feet)', validators=[DataRequired()])
-    height_inches = IntegerField('Height (inches)', validators=[DataRequired()])
+    height_inches = IntegerField('Height (inches)')
     desired_weight = IntegerField('Desired Weight', validators=[DataRequired()])
     current_weight = IntegerField('Current Weight', validators=[DataRequired()])
     activity_level = SelectField('Activity Level', choices=[('sedentary', 'Sedentary'), 
@@ -27,4 +27,4 @@ class SettingsForm(FlaskForm):
                                                             ('active', 'Active')], 
                                 validators=[DataRequired()])
     time_frame = IntegerField('Time Frame (in weeks)', validators=[DataRequired()])
-    goal = SelectField('Focus', choices=['Gain Muscle', 'Lose Fat'], validators=[DataRequired()])
+    goal = SelectField('Focus', choices=['Gain Muscle', 'Maintain Muscle'], validators=[DataRequired()])

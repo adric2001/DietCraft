@@ -73,7 +73,15 @@
                     
                 </form> 
 
-                
+                <div> 
+                    {% if calorie_requirement %}
+                        <p>{{ calorie_requirement }}</p>
+                    {% endif %}
+
+                    {% if protein_requirement %}
+                        <p>and your protein requirement is {{ protein_requirement }}</p>
+                    {% endif %}
+                </div>
         </div>
         
         <div class="container text-end">

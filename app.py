@@ -125,6 +125,24 @@ def login():
 def profile():
     form = SettingsForm()
 
+    height_inch = current_user.height_inches or ""
+
+    calorie_requirement = DietCraft.generate_calorie_requirements(
+            age=current_user.age, 
+            gender=current_user.gender, 
+            height_feet=current_user.height_feet, 
+            height_inch=height_inch, 
+            weight=current_user.current_weight, 
+            desired_weight=current_user.desired_weight, 
+            time_frame=current_user.time_frame, 
+            activity=current_user.activity_level,
+            )
+    
+    protein_requirement = DietCraft.generate_protein_requirements(
+           goal=current_user.goal,
+           weight=current_user.current_weight,
+        )
+
     if request.method == 'GET':
         # Pre-fill form with the user's current settings
         form.age.data = current_user.age
@@ -136,7 +154,8 @@ def profile():
         form.activity_level.data = current_user.activity_level
         form.time_frame.data = current_user.time_frame
         form.goal.data = current_user.goal
-
+        
+   
     if form.validate_on_submit():
         # Update user settings in the database
         current_user.age = form.age.data
@@ -149,20 +168,10 @@ def profile():
         current_user.time_frame = form.time_frame.data
         current_user.goal = form.goal.data
         
-        flash(DietCraft.generate_calorie_requirements(
-            age=form.age.data, 
-            gender=form.gender.data, 
-            height_feet=form.height_feet.data, 
-            height_inch=form.height_inches.data, 
-            weight=form.current_weight.data, 
-            desired_weight=form.desired_weight.data, 
-            time_frame=form.time_frame.data, 
-            activity=form.activity_level.data
-            ))
         flash("Your Settings have been Updated!")
         db.session.commit()  # Save changes to the database
         return redirect(url_for('profile'))  # Redirect to refresh the page with saved data
-    return render_template("profile.html", current_user=current_user, form=form)
+    return render_template("profile.html", current_user=current_user, form=form, calorie_requirement=calorie_requirement, protein_requirement=protein_requirement)
 
 @app.route('/logout')
 def logout():
