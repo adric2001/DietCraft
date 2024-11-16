@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, IntegerField, SelectField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 
 class RegisterForm(FlaskForm):
@@ -18,7 +18,7 @@ class SettingsForm(FlaskForm):
     age = IntegerField('Age', validators=[DataRequired()])
     gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')], validators=[DataRequired()])
     height_feet = IntegerField('Height (feet)', validators=[DataRequired()])
-    height_inches = IntegerField('Height (inches)')
+    height_inches = IntegerField('Height (inches)', validators=[Optional()])
     desired_weight = IntegerField('Desired Weight', validators=[DataRequired()])
     current_weight = IntegerField('Current Weight', validators=[DataRequired()])
     activity_level = SelectField('Activity Level', choices=[('sedentary', 'Sedentary'), 
