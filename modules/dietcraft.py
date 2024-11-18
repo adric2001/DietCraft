@@ -9,47 +9,7 @@ class DietCraft:
     def __init__(self):
         pass
 
-    def create_spoonacular_user(api_key, firstName, email):
-
-        url = "https://api.spoonacular.com/users/connect"
-        headers = {
-            "x-api-key": api_key,
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "firstName": firstName,
-            "email": email
-        }
-
-
-        try:
-
-            response = requests.post(url, json=payload, headers=headers)
-
-            if response.status_code == 200:
-                # Return successful custom dictionary
-                data = response.json()
-                return {
-                    "status": "success",
-                    "username": data.get("username"),
-                    "hash": data.get("hash"),
-                    "spoonacularPassword": data.get("spoonacularPassword")
-                }
-            else:
-                # Return custom dictionary for failure
-                return {
-                    "status": "error",
-                    "message": f"API request failed with status code {response.status_code}",
-                    "response_text": response.text
-                }
-        except Exception as e:
-            # Return custom dictionary for exceptions
-            return {
-                "status": "error",
-                "message": f"An exception occurred: {str(e)}"
-            }
-        
-    def generate_weekly_diet_plan(calories):
+    def generate_weekly_diet_plan(calories, protien):
         pass
 
     def generate_calorie_requirements(age, gender, height_feet, height_inch, weight, desired_weight, time_frame, activity):

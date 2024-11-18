@@ -57,19 +57,6 @@ class User(UserMixin, db.Model):
     time_frame: Mapped[int] = mapped_column(Integer, nullable=True)
     goal: Mapped[str] = mapped_column(String(255), nullable=True)
 
-    spoonacular: Mapped["SpoonacularAPI"] = db.relationship(
-        "SpoonacularAPI", back_populates="user", uselist=False
-    )
-
-class SpoonacularAPI(db.Model):
-    __tablename__ = "spoonacular_api"
-    
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), db.ForeignKey("users.email"), unique=True, nullable=False)
-    api_username = db.Column(db.String(255), nullable=False)
-    api_password_hashed = db.Column(db.String(255), nullable=False)
-
-    user = db.relationship("User", back_populates="spoonacular")
 
 with app.app_context():
     db.create_all()
@@ -113,18 +100,6 @@ def register():
 
         # This line will authenticate the user with Flask-Login
         login_user(new_user)
-
-        response = DietCraft.create_spoonacular_user(api_key=spoonacular_api_key, firstName=current_user.name, email=current_user.email)
-
-        spoonacular_entry = SpoonacularAPI(
-            email=current_user.email,
-            api_username=response['username'],
-            api_password_hashed=response['hash'],
-        )
-
-        db.session.add(spoonacular_entry)
-        db.session.commit()
-
         return redirect(url_for("profile"))
     return render_template("register.html", form=form, current_user=current_user)
 
