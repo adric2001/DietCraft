@@ -18,7 +18,7 @@
 
 
         <div class="container mt-5">
-            <h1 class="mb-4">Your Settings</h1>
+            <h1 class="mb-4">Your Profile</h1>
             <div>
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
@@ -28,64 +28,114 @@
                     {% endif %}
                 {% endwith %}
             </div>
-            <form method="POST" action="{{ url_for('profile') }}">
-                <button class="btn btn-warning btn-hover mb-4" type="submit">Save Settings</button>
-                {{ form.hidden_tag() }}
+        
+            <!-- Collapsible Button -->
+            <button class="btn btn-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#settingsForm" aria-expanded="false" aria-controls="settingsForm">
+                Edit Settings
+            </button>
+        
+            <!-- Collapsible Form -->
+            <div class="collapse" id="settingsForm">
                 <form method="POST" action="{{ url_for('profile') }}">
+                    <button class="btn btn-warning btn-hover mb-4" type="submit">Save Settings</button>
                     {{ form.hidden_tag() }}
-
+        
                     <div class="mb-3">
-                    {{ form.age.label }} {{ form.age() }}
+                        {{ form.age.label }} {{ form.age(class_="form-control") }}
                     </div>
-
+        
                     <div class="mb-3">
-                    {{ form.gender.label }} {{ form.gender() }}
+                        {{ form.gender.label }} {{ form.gender(class_="form-select") }}
                     </div>
-
+        
                     <div class="mb-3">
-                    {{ form.height_feet.label }} {{ form.height_feet() }}
+                        {{ form.height_feet.label }} {{ form.height_feet(class_="form-control") }}
                     </div>
-
+        
                     <div class="mb-3">
-                    {{ form.height_inches.label }} {{ form.height_inches() }}
+                        {{ form.height_inches.label }} {{ form.height_inches(class_="form-control") }}
                     </div>
-
+        
                     <div class="mb-3">
-                    {{ form.desired_weight.label }} {{ form.desired_weight() }}
+                        {{ form.desired_weight.label }} {{ form.desired_weight(class_="form-control") }}
                     </div>
-
+        
                     <div class="mb-3">
-                    {{ form.current_weight.label }} {{ form.current_weight() }}
+                        {{ form.current_weight.label }} {{ form.current_weight(class_="form-control") }}
                     </div>
-
+        
                     <div class="mb-3">
-                    {{ form.activity_level.label }} {{ form.activity_level() }}
+                        {{ form.activity_level.label }} {{ form.activity_level(class_="form-select") }}
                     </div>
-                    
+        
                     <div class="mb-3">
-                    {{ form.time_frame.label }} {{ form.time_frame() }}
+                        {{ form.time_frame.label }} {{ form.time_frame(class_="form-control") }}
                     </div>
-
+        
                     <div class="mb-3">
-                    {{ form.goal.label }} {{ form.goal() }}
+                        {{ form.goal.label }} {{ form.goal(class_="form-control") }}
                     </div>
-
-                    
-                </form> 
-
-                <div> 
-                    {% if calorie_requirement %}
-                        <p>{{ calorie_requirement }}</p>
-                    {% endif %}
-
-                    {% if protein_requirement %}
-                        <p>and your protein requirement is {{ protein_requirement }}</p>
-                    {% endif %}
-                </div>
+                </form>
+            </div>
+        
+            <div> 
+                {% if calorie_requirement %}
+                    <p>Your Calorie Requirement is: {{ calorie_requirement }}</p>
+                {% endif %}
+        
+                {% if protein_requirement %}
+                    <p>Your Protein Requirement is: {{ protein_requirement }}</p>
+                {% endif %}
+            </div>
         </div>
         
+        
         <div class="container text-end">
-            <a class="btn btn-warning btn-hover">Generate Weekly Diet</a>
+
+            <form action="{{ url_for('generate_meals') }}" method="get">
+                <button type="submit" class="btn btn-warning btn-hover">Generate Weekly Diet</button>
+            </form>
+            
+            {% if meals %}
+            <div class="container mt-4">
+                <h3>Your Weekly Meal Plan</h3>
+                <table class="table table-hover table-bordered table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Meal Type</th>
+                            <th>Title</th>
+                            <th>Calories</th>
+                            <th>Protein (g)</th>
+                            <th>Recipe Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meal in meals %}
+                        <tr>
+                            <td>{{ meal.day }}</td>
+                            <td>{{ meal.meal_type.title() }}</td>
+                            <td>{{ meal.title }}</td>
+                            <td>{{ meal.calories }}</td>
+                            <td>{{ meal.protein }}</td>
+                            <td>
+                                {% if meal.url %}
+                                <a href="{{ meal.url }}" target="_blank">View Recipe</a>
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="container mt-4">
+                <p>No meals generated yet. Click "Generate Meals" to create your weekly plan!</p>
+            </div>
+            {% endif %}
+
         </div>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

@@ -27,4 +27,4 @@ class SettingsForm(FlaskForm):
                                                             ('active', 'Active')], 
                                 validators=[DataRequired()])
     time_frame = IntegerField('Time Frame (in weeks)', validators=[DataRequired()])
-    goal = SelectField('Focus', choices=['Gain Muscle', 'Maintain Muscle'], validators=[DataRequired()])
+    goal = SelectField('Muscle Focus', choices=['Gain', 'Maintain', 'Lose'], validators=[DataRequired()])

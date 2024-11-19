@@ -7,8 +7,8 @@ from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Integer, String, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
 from modules.forms import RegisterForm, LoginForm, SettingsForm
 
@@ -24,7 +24,7 @@ os.makedirs(os.path.dirname(db_path), exist_ok=True)  # Ensure 'data' folder exi
 
 # Initialize the Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secrets1'
+app.config['SECRET_KEY'] = 'secrets12345678'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 db = SQLAlchemy(app)
 ckeditor = CKEditor(app)
@@ -56,6 +56,28 @@ class User(UserMixin, db.Model):
     activity_level: Mapped[str] = mapped_column(String(20), nullable=True)
     time_frame: Mapped[int] = mapped_column(Integer, nullable=True)
     goal: Mapped[str] = mapped_column(String(255), nullable=True)
+
+    #Requirements
+    calorie_requirement: Mapped[int] = mapped_column(Integer, nullable=True)
+    protein_requirement: Mapped[int] = mapped_column(Integer, nullable=True)
+
+     # Relationship to MealPlan
+    meal_plans: Mapped[list["MealPlan"]] = relationship("MealPlan", back_populates="user")
+
+class MealPlan(db.Model):
+    __tablename__ = "meal_plans"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    day: Mapped[str] = mapped_column(String(20))  # e.g., "Day 1", "Day 2"
+    meal_type: Mapped[str] = mapped_column(String(20))  # e.g., "breakfast", "lunch"
+    title: Mapped[str] = mapped_column(String(255))
+    calories: Mapped[int] = mapped_column(Integer)
+    protein: Mapped[int] = mapped_column(Integer)
+    url: Mapped[str] = mapped_column(String(255), nullable=True)
+
+    # Relationship back to User
+    user: Mapped["User"] = relationship("User", back_populates="meal_plans")
 
 
 with app.app_context():
@@ -134,7 +156,6 @@ def profile():
     # Initialize variables to avoid UnboundLocalError
     calorie_requirement = None
     protein_requirement = None
-    print(current_user.height_inches)
 
     if request.method == 'GET':
         # Pre-fill form with the user's current settings
@@ -166,6 +187,9 @@ def profile():
                 weight=current_user.current_weight,
             )
 
+         # Get meals for the current user
+        meals = MealPlan.query.filter_by(user_id=current_user.id).all()
+
     if form.validate_on_submit():
         # Update user settings in the database
         current_user.age = form.age.data
@@ -178,7 +202,6 @@ def profile():
         current_user.time_frame = form.time_frame.data
         current_user.goal = form.goal.data
 
-        
         # Recalculate requirements after the form submission
         calorie_requirement = DietCraft.generate_calorie_requirements(
             age=current_user.age,
@@ -196,8 +219,17 @@ def profile():
             weight=current_user.current_weight,
         )
 
-        flash("Your Settings have been Updated!")
-        db.session.commit()  # Save changes to the database
+        # Save calorie and protein requirements to the database
+        current_user.calorie_requirement = calorie_requirement
+        current_user.protein_requirement = protein_requirement
+
+        if calorie_requirement == "Not Suggested":
+            flash("Your Settings have not been Updated!")
+            pass
+        else:
+            flash("Your Settings have been Updated!")
+            db.session.commit()  
+
         return redirect(url_for('profile'))  # Redirect to refresh the page with saved data
 
     return render_template(
@@ -206,7 +238,58 @@ def profile():
         form=form,
         calorie_requirement=calorie_requirement,
         protein_requirement=protein_requirement,
+        meals=meals,
     )
+
+
+@app.route('/generate', methods=['GET'])
+@login_required
+def generate_meals():
+    if (
+        current_user.calorie_requirement is not None
+        and current_user.protein_requirement is not None
+        and current_user.goal is not None
+    ):
+        try:
+            # Ensure calorie and protein requirements are numeric
+            daily_calories = float(current_user.calorie_requirement)
+            daily_protein = float(current_user.protein_requirement)
+
+            # Call the function to generate meals
+            result = DietCraft.generate_weekly_meals(
+                api_key=spoonacular_api_key,
+                daily_calories=daily_calories,
+                daily_protein=daily_protein,
+                goal=current_user.goal,
+            )
+
+            # Store the result in the MealPlan table
+            for day, daily_meals in result.items():
+                for meal_type, details in daily_meals.items():
+                    meal_plan = MealPlan(
+                        user_id=current_user.id,
+                        day=day,
+                        meal_type=meal_type,
+                        title=details["title"],
+                        calories=details["calories"],
+                        protein=details["protein"],
+                        url=details["url"],
+                    )
+                    db.session.add(meal_plan)
+
+            db.session.commit()
+
+            flash("Meals Generated and Saved")
+            return redirect(url_for('profile'))
+
+        except ValueError:
+            flash("Error: Invalid calorie or protein requirement.")
+            return redirect(url_for('profile'))
+    else:
+        flash("Error: Some required fields are missing.")
+        return redirect(url_for('profile'))
+
+
 
 @app.route('/logout')
 def logout():
