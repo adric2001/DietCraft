@@ -10,38 +10,47 @@ class DietCraft:
     def __init__(self):
         pass
 
-    def generate_weekly_meals(api_key, daily_calories, daily_protein, goal="maintain"):
+    def generate_weekly_meals(api_key, daily_calories, daily_protein, goal="maintain", custom_snack=None):
         """
         Generates weekly meals based on calorie and protein requirements.
-        The goal can be 'gain', 'lose', or 'maintain' weight.
+        Replaces the snack with a custom meal for every day.
 
         :param api_key: Spoonacular API key
         :param daily_calories: Daily calorie target
         :param daily_protein: Daily protein target
         :param goal: Weight goal - 'gain', 'lose', or 'maintain'
+        :param custom_snack: Dictionary specifying custom meal details to replace snack.
+                            Example: {"title": "Fruit Smoothie", "calories": 150, "protein": 5, "url": None}
         :return: Dictionary containing the weekly meal plan
         """
+        # Default custom snack if none is provided
+        custom_snack = custom_snack or {"title": "Protein Shake (Custom)", "calories": 290, "protein": 33, "url": None}
+        snack_calories = custom_snack.get("calories", 0)
+        snack_protein = custom_snack.get("protein", 0)
+
+        # Remaining calorie and protein allowance after custom snack
+        remaining_calories = max(0, daily_calories - snack_calories)
+        remaining_protein = max(0, daily_protein - snack_protein)
+
         # Define meal calorie and protein distribution
         meal_distribution = {
-            "breakfast": 0.20,  # 25% of daily calories
-            "lunch": 0.35,      # 35% of daily calories
-            "dinner": 0.35,     # 30% of daily calories
-            "snack": 0.10       # 10% of daily calories
+            "breakfast": 0.25,  # 25% of remaining calories
+            "lunch": 0.35,       # 50% of remaining calories
+            "dinner": 0.35      # 25% of remaining calories
         }
 
         # Define meal types
         meal_types = {
             "breakfast": ["breakfast"],
             "lunch": ["main course", "salad", "soup"],
-            "dinner": ["main course", "side dish"],
-            "snack": ["snack", "fingerfood", "dessert"]
+            "dinner": ["main course", "side dish"]
         }
 
         # Calculate calories and protein for each meal
         meal_requirements = {
             meal: {
-                "calories": int(daily_calories * fraction),
-                "protein": int(daily_protein * fraction),
+                "calories": int(remaining_calories * fraction),
+                "protein": int(remaining_protein * fraction),
                 "type": meal_types[meal]
             }
             for meal, fraction in meal_distribution.items()
@@ -53,14 +62,13 @@ class DietCraft:
                 return calories, calories + 100  # Prefer equal or slightly over
             elif goal == "Lose":
                 return calories - 100, calories  # Prefer equal or slightly under
-            else:
-                return calories - 50, calories + 50  # Balanced range for maintenance
+            return calories - 50, calories + 50  # Balanced range for maintenance
 
         # Fetch a batch of recipes for each meal type
         def fetch_recipes(meal, min_calories, max_calories, protein, types):
             url = "https://api.spoonacular.com/recipes/complexSearch"
             params = {
-                "number": 50,  # Fetch a large batch for reuse
+                "number": 100,  # Fetch a large batch for reuse
                 "minCalories": min_calories,
                 "maxCalories": max_calories,
                 "minProtein": protein - 5,     # Slightly relaxed protein requirement
@@ -90,10 +98,19 @@ class DietCraft:
         weekly_meals = {}
         for day in range(1, 8):  # Loop through 7 days
             daily_plan = {}
+
+            # Add custom snack for each day
+            daily_plan["snack"] = {
+                "title": custom_snack.get("title", "Custom Snack"),
+                "calories": snack_calories,
+                "protein": snack_protein,
+                "url": custom_snack.get("url", None)
+            }
+
             used_recipes_today = set()  # Track recipes used for the current day
             for meal, recipes in all_recipes.items():
                 recipe = next(
-                    (r for r in recipes if recipe_usage[r["id"]] < 2 and r["id"] not in used_recipes_today),
+                    (r for r in recipes if recipe_usage[r["id"]] < 4 and r["id"] not in used_recipes_today),
                     None
                 )
                 if recipe:
@@ -208,10 +225,6 @@ class DietCraft:
                 return int(weightgain_df['Calories/Day'].iloc[0]) if len(weightgain_df) > 0 else None
             else:
                 return None
-
-        
-
-
 
     def generate_protein_requirements(goal, weight):
 

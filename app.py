@@ -10,7 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
-from modules.forms import RegisterForm, LoginForm, SettingsForm
+from modules.forms import RegisterForm, LoginForm, SettingsForm, CustomMealForm
 
 # Load environment variables from .env file
 load_dotenv()
@@ -24,7 +24,7 @@ os.makedirs(os.path.dirname(db_path), exist_ok=True)  # Ensure 'data' folder exi
 
 # Initialize the Flask app
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secrets12345678'
+app.config['SECRET_KEY'] = 'secrets123456789'
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 db = SQLAlchemy(app)
 ckeditor = CKEditor(app)
@@ -75,6 +75,9 @@ class MealPlan(db.Model):
     calories: Mapped[int] = mapped_column(Integer)
     protein: Mapped[int] = mapped_column(Integer)
     url: Mapped[str] = mapped_column(String(255), nullable=True)
+    custom_meal_title: Mapped[str] = mapped_column(String(255), nullable=True)
+    custome_meal_calories: Mapped[int] = mapped_column(Integer, nullable=True)
+    custom_meal_protein: Mapped[int] = mapped_column(Integer, nullable=True)
 
     # Relationship back to User
     user: Mapped["User"] = relationship("User", back_populates="meal_plans")
@@ -241,6 +244,23 @@ def profile():
         meals=meals,
     )
 
+@app.route('/add_meal', methods=['GET', 'POST'])
+@login_required
+def add_meal():
+    form = CustomMealForm()
+
+    if request.method == 'GET':
+        form.title = current_user.custom_title
+        form.calories = current_user.custom_calories
+        form.protein = current_user.custom_protein
+    
+    if form.validate_on_submit():
+        current_user.custom_title = form.title
+        current_user.custom_calories = form.calories
+        current_user.custom_protein = form.process
+
+    return redirect(url_for('profile'))  # Redirect to refresh the page with saved data
+
 
 @app.route('/generate', methods=['GET'])
 @login_required
@@ -254,6 +274,10 @@ def generate_meals():
             # Ensure calorie and protein requirements are numeric
             daily_calories = float(current_user.calorie_requirement)
             daily_protein = float(current_user.protein_requirement)
+
+            # Delete existing meal plans for the current user
+            MealPlan.query.filter_by(user_id=current_user.id).delete()
+            db.session.commit()  # Commit the deletion to ensure a clean slate
 
             # Call the function to generate meals
             result = DietCraft.generate_weekly_meals(
@@ -277,7 +301,7 @@ def generate_meals():
                     )
                     db.session.add(meal_plan)
 
-            db.session.commit()
+            db.session.commit()  # Commit the new meal plan to the database
 
             flash("Meals Generated and Saved")
             return redirect(url_for('profile'))
@@ -288,7 +312,6 @@ def generate_meals():
     else:
         flash("Error: Some required fields are missing.")
         return redirect(url_for('profile'))
-
 
 
 @app.route('/logout')

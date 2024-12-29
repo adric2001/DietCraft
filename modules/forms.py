@@ -28,3 +28,8 @@ class SettingsForm(FlaskForm):
                                 validators=[DataRequired()])
     time_frame = IntegerField('Time Frame (in weeks)', validators=[DataRequired()])
     goal = SelectField('Muscle Focus', choices=['Gain', 'Maintain', 'Lose'], validators=[DataRequired()])
+
+class CustomMealForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    calories = IntegerField("Calories", validators=[DataRequired()])
+    protein = IntegerField("Protein", validators=[DataRequired()])
